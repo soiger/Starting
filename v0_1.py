@@ -6,6 +6,8 @@ Created on Mon Apr 16 09:00:14 2018
 """
 
 import pymysql
+sim = []
+simid=[]
 def readsql(sqlword):
     # 打开数据库连接
     db = pymysql.connect("localhost","root","123456","recommander" )
@@ -26,6 +28,12 @@ def readsql(sqlword):
     # 关闭数据库连接
     db.close()
 
+def isexisted(mid,movies):
+    for row in movies:
+        if(mid = row[1]):
+            return row[2]
+    return 0
+    
 """know user 288's rating matrixs"""
 sqlword = "SELECT * FROM ratings WHERE id = 288 "
 results = readsql(sqlword)
@@ -38,6 +46,16 @@ for row in results:
 sqlword_1 = "SELECT DISTINCT id FROM ratings" 
 users=readsql(sqlword_1)
 for row in users:
+    tgtmovie = []
+    tgtscore_test = []
+    tgtscore_main = []
     id=row[0]
     sqlword_x = "SELECT * FROM ratings WHERE id =" + id
     movies = readsql(sqlword)
+    for row in movies:
+        sc = isexisted(row[1],results)
+        if(sc!=0):
+            tgtmovie.append(row[1])
+            tgtscore_test.append(row[2])
+            tgtscore_main.append(sc)
+    #计算相似度
